@@ -1,0 +1,5 @@
+<app-header></app-header>
+<div class="container">
+  <div *ngIf="message" class="alert alert-success">Shared Alert {{message.text}}</div>
+  <router-outlet></router-outlet>
+</div>

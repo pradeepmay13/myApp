@@ -1,0 +1,413 @@
+<div class="container pt-4">
+	<h2 class="text-center">Recruitment Form</h2>
+	<div class="row">
+	<form [formGroup]="rrfForm"  class="form-horizontal" (ngSubmit)="rrfForm.valid && formSubmit()" novalidate>
+        <section id="user_info">
+            <!--<h5 class="page-header text-primary"><i class="fa fa-user"></i> User information</h5>-->
+            <fieldset class="well">
+                <div class="row">
+                    <legend class="text-primary">
+                        <h5><i class="fa fa-user"></i> User information </h5>
+                    </legend>
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_new_recruit">Placement Type</label><br>
+                            <label class="radio-inline">
+                                <input type="radio" name="rrf_new_recruit" id="rrf_new_recruit1" class="" value="Y" checked="" formControlName="rrf_new_recruit"> New Recruit   
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="rrf_new_recruit" id="rrf_new_recruit0" class="" value="N" formControlName="rrf_new_recruit"> Replacement
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_open_position">Open Position <span class="text-danger">*</span></label>
+                            <select formControlName="rrf_open_position" name="rrf_open_position" class="form-control">
+                                <option value="">Please Select</option>
+                                <option *ngFor=" let rrfOP of rrfOpenPosition " [value]="rrfOP.DESIGNATION_NAME">{{rrfOP.DESIGNATION_NAME}}</option>
+                            </select>
+                            <div *ngIf="!rrfForm.controls['rrf_open_position'].valid && rrfForm.controls['rrf_open_position'].touched" class="text-danger">
+                              <div [hidden]="!rrfForm.controls['rrf_open_position'].errors.required">Open Position is required.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">										        
+                        <div class="form-group has-error">
+                            <label for="rrf_reporting_mgr">Reporting manager <span class="text-danger">*</span></label>
+                            <select formControlName="rrf_reporting_mgr" class="form-control" id="rrf_reporting_mgr" name="rrf_reporting_mgr"  tabindex="-1" aria-hidden="true" (ngModelChange)="managerData($event)"><!--(ngModelChange)-->
+                                <option value="">Please Select</option>
+                                <option *ngFor=" let rrfRM of rrfReportingManager " [value]="rrfRM | json">{{rrfRM.Manager_Name+' ['+rrfRM.Employee_Code+"]"}}</option>
+                            </select>
+                            <div *ngIf="!rrfForm.controls['rrf_reporting_mgr'].valid && rrfForm.controls['rrf_reporting_mgr'].touched" class="text-danger">
+                              <div [hidden]="!rrfForm.controls['rrf_reporting_mgr'].errors.required">Reporting Manager is required.</div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-3">										        
+                        <div class="form-group">
+                            <label for="rrf_reporting_mgr_id">ID <span class="text-danger">*</span></label>
+                            <input formControlName="rrf_reporting_mgr_id" name="rrf_reporting_mgr_id" type="text" size="25" maxlength="100" class="form-control" readonly="readonly">
+                        </div>
+                    </div>
+					<div class="col-md-3">										        
+                        <div class="form-group">
+                            <label for="rrf_gradelbl">Designation <span class="text-danger">*</span></label>
+							<input formControlName="rrf_grade" name="rrf_grade" type="text" size="25" maxlength="100" class="form-control" value="" readonly="readonly">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">                                            
+					<div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_department_location">Department <span class="text-danger">*</span></label>
+                            <select class="form-control " formControlName="rrf_department_location" name="rrf_department_location">
+                                <option value="">Please Select</option>
+                                <option *ngFor=" let rrfDept of rrfDepartment " [value]="rrfDept.Department">{{rrfDept.Department}}</option>
+                            </select> 
+                            <div *ngIf="rrfForm.controls['rrf_department_location'].touched && !rrfForm.controls['rrf_department_location'].valid " class="text-danger">
+                                <span *ngIf="rrfForm.controls['rrf_department_location'].hasError('required') ">  
+                                    Department is required                                 
+                                </span> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_region"> Region <span class="text-danger">*</span></label>
+                            <select class="form-control " formControlName="rrf_region" name="rrf_region" (change)="getBranches($event)">
+                                <option value="">Please Select</option>
+                                <option *ngFor=" let rrfregion of rrfRegion " [value]="rrfregion.region">{{rrfregion.region}}</option>
+                            </select>
+                            <div *ngIf="!rrfForm.controls['rrf_region'].valid && rrfForm.controls['rrf_region'].touched" class="text-danger">
+                              <div [hidden]="!rrfForm.controls['rrf_region'].errors.required">Region is required.</div>
+                            </div> 
+                        </div>
+                    </div>
+<!--                                            <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_location"> Location <span class="text-danger">*</span></label>
+                            <select class="form-control " id="rrf_location" name="rrf_location" >
+                                <option value="">Please Select</option>
+                            </select> 
+                        </div>
+                    </div>-->
+                </div>
+                <div class="row"> 
+					<div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_project_name">Project Name <span class="text-danger">*</span></label>
+                            <input formControlName="rrf_project_name" name="rrf_project_name" type="text" size="25" maxlength="100" class="form-control" >
+                        </div>
+                    </div>                                       
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="RRF_BRANCH_ID"> Branch <span class="text-danger">*</span></label>
+                            <select class="form-control" formControlName="RRF_BRANCH_ID" name="RRF_BRANCH_ID">
+                                <option value="">Please Select</option>
+                                <option *ngFor=" let rrfBranch of rrfBranches " [value]="rrfBranch.Branch_Name">{{rrfBranch.Branch_Name}}</option>
+                            </select> 
+                            <div *ngIf="!rrfForm.controls['RRF_BRANCH_ID'].valid && rrfForm.controls['RRF_BRANCH_ID'].touched" class="text-danger">
+                              <div [hidden]="!rrfForm.controls['RRF_BRANCH_ID'].errors.required">Branch is required.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_reason_for_vacancy">Reason for Vacancy <span class="text-danger">*</span></label>
+                            <select class="form-control" name="rrf_reason_for_vacancy" formControlName="rrf_reason_for_vacancy">
+                                <option value="">--Select Option--</option>
+                                <option value="Workload">Workload</option>
+                                <option value="New Project">New Project</option>
+                                <option value="Transfer">Transfer</option>
+                                <option value="Promotion">Promotion</option>
+                                <option value="Resignation">Resignation</option>
+                                <option value="Termination">Termination</option>
+                            </select>
+                            <div *ngIf="!rrfForm.controls['rrf_reason_for_vacancy'].valid && rrfForm.controls['rrf_reason_for_vacancy'].touched" class="text-danger">
+                              <div [hidden]="!rrfForm.controls['rrf_reason_for_vacancy'].errors.required">Reason for Vacancy is required.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_workload_reasons">Justify by Reasons</label>
+                            <textarea class="form-control" name="rrf_workload_reasons" formControlName="rrf_workload_reasons" rows="2" placeholder="Remarks ..."></textarea> 
+                        </div>
+                    </div>
+                </div>
+                <div class="row"> 
+                    
+                    <div class="col-md-6" id="rrf_person_replaced">										        
+                        <div class="form-group">
+                            <label for="rrf_name_person_replaced">Name of person replaced</label>
+                            <input formControlName="rrf_name_person_replaced" name="rrf_name_person_replaced" type="text" size="25" maxlength="100" class="form-control" value=""> 
+                        </div>
+                    </div>
+					<div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_position_per_manpower_budget">Position as per Manpower Budget</label><br>
+                            <label class="radio-inline">
+                                <input type="radio" name="rrf_position_per_manpower_budget" formControlName="rrf_position_per_manpower_budget" class="" value="1"> Yes 
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="rrf_position_per_manpower_budget" formControlName="rrf_position_per_manpower_budget" class="" value="0" checked=""> No
+                            </label>                                           
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+					<div class="col-md-6" id="rrfLWD">										        
+                        <div class="form-group">
+                            <label for="rrf_LWD">LWD (Last Working Day/Date of Resignation)</label>
+                            <div class="input-group date" id="datetimepicker1">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>                                                    
+                                <input formControlName="rrf_LWD" name="rrf_LWD" type="text" size="25" maxlength="100" class="form-control" value=""> 
+                            </div>
+                        </div>
+                    </div>
+					<div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_manpower_budget_reasons">Reason for Exclusion in Budget</label>
+                            <textarea class="form-control" name="rrf_manpower_budget_reasons" formControlName="rrf_manpower_budget_reasons" rows="2" placeholder=""></textarea> 
+                        </div>
+                    </div>
+				</div>
+                <div class="row">
+					
+				<div>
+
+				
+            </div></div></fieldset>
+            <fieldset class="well">
+                <div class="row">
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_permananet_ftc_third_party">Pay Roll <span class="text-danger">*</span></label>
+                            <select formControlName="rrf_permananet_ftc_third_party" name="rrf_permananet_ftc_third_party" class="form-control" (change)="payRoll($event)">
+                                <option value="">--Select Roll--</option>
+                                <option value="Permanent">Permanent</option>
+                                <option value="FTC">FTC</option>
+                                <option value="3rd Party Roll">3rd Party Roll</option>
+                            </select>
+                            <div *ngIf="rrfForm.controls['rrf_permananet_ftc_third_party'].touched && !rrfForm.controls['rrf_permananet_ftc_third_party'].valid " class="text-danger">
+                                <span *ngIf="rrfForm.controls['rrf_department_location'].hasError('required') ">  
+                                    Department is required                                 
+                                </span> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_ijp_external_hiring">Hiring <span class="text-danger">*</span> </label>
+                            <select formControlName="rrf_ijp_external_hiring" name="rrf_ijp_external_hiring" class="form-control">
+                                <option value="">--Select Hiring--</option>
+                                <option value="IJP">IJP</option>
+                                <option value="External Hiring">External Hiring</option>
+                                <option value="Both">Both (IJP + External)</option>
+                                <option value="Career Flash">Career Flash</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+				<div class="row">
+					<div class="col-md-6" id="rrf_vendor" *ngIf="rrfVendor">	
+						<div class="form-group">
+                            <label for="rrf_vendor_name">Vendor Name<span class="text-danger">*</span></label>
+                            <input formControlName="rrf_vendor_name" name="rrf_vendor_name" type="text" size="25" maxlength="100" class="form-control" value="" [readonly]="vendorReadonly">
+                            <div *ngIf="rrfForm.controls['rrf_permananet_ftc_third_party'].value==='3rd Party Roll'" class="text-danger">
+                                <div *ngIf="rrfForm.controls['rrf_vendor_name'].touched && !rrfForm.controls['rrf_vendor_name'].valid " class="text-danger">
+                                    <span *ngIf="rrfForm.controls['rrf_vendor_name'].hasError('required') "> 
+                                        Vendor Name is required                                 
+                                    </span> 
+                                </div>
+                            </div>
+                            <p>Value: {{ rrfForm.get('rrf_vendor_name').value }}</p>
+                        </div>
+					</div>
+				</div>
+                <div class="col-md-4">
+                                <div class="form-group form-black label-floating is-empty">
+                                    <label class="control-label">Email address</label>
+                                    <input type="email" formControlName="email" class="form-control" >
+
+                                    <div class="text text-danger has-error" *ngIf="rrfForm.controls.email.touched">
+                                      <div *ngIf="rrfForm.controls.email.hasError('required')">Please Enter your Email</div>
+                                      <div *ngIf="!rrfForm.controls.email.hasError('required') && rrfForm.controls.email.hasError('invalidEmailAddress')">Please Enter Valid Email</div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                <div class="row" id="tenure_div" *ngIf="tenureDiv">
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_temp_tenure_from_date">Tenure (temporary)</label>
+                            <div class="input-group date" id="datetimepicker1">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <input type="text" class="form-control" name="rrf_temp_tenure_from_date" formControlName="rrf_temp_tenure_from_date" placeholder="From Date" bsDatepicker [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY', containerClass:'theme-dark-blue' }" >
+                            </div>
+                            <!--<div *ngIf="rrfForm.controls['rrf_permananet_ftc_third_party'].value!=='Permanent'" class="text-danger">-->
+                                <div *ngIf="rrfForm.controls['rrf_temp_tenure_from_date'].touched && !rrfForm.controls['rrf_temp_tenure_from_date'].valid " class="text-danger">
+                                    <span *ngIf="rrfForm.controls['rrf_temp_tenure_from_date'].hasError('required') "> 
+                                        From Date is required                                 
+                                    </span> 
+                                    <span *ngIf="rrfForm.controls['rrf_temp_tenure_from_date'].hasError('pattern') "> 
+                                        Invalid Date format                                 
+                                    </span>                                     
+                                </div>
+                                Value: {{ rrfForm.get('rrf_temp_tenure_from_date').value | date:'dd-MM-yyyy' }}
+                            <!--</div>-->
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_temp_tenure_to_date">&nbsp;</label>
+                            <div class="input-group date" id="datetimepicker1">
+                                <div class="input-group-addon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <input type="text" class="form-control" name="rrf_temp_tenure_to_date" formControlName="rrf_temp_tenure_to_date" placeholder="To Date" bsDatepicker [bsConfig]="{ dateInputFormat: 'DD-MM-yyyy', containerClass:'theme-dark-blue' }">
+                            </div>
+                            <!--<div *ngIf="rrfForm.controls['rrf_permananet_ftc_third_party'].value!=='Permanent'" class="text-danger">-->
+                                <div *ngIf="rrfForm.controls['rrf_temp_tenure_to_date'].touched && !rrfForm.controls['rrf_temp_tenure_to_date'].valid " class="text-danger">
+                                    <span *ngIf="rrfForm.controls['rrf_temp_tenure_to_date'].hasError('required') "> 
+                                        To Date is required                                 
+                                    </span> 
+                                    <span *ngIf="!rrfForm.controls.rrf_temp_tenure_to_date.hasError('required') && rrfForm.controls.rrf_temp_tenure_to_date.hasError('invalidDate')">Please Enter Valid Date</span>
+                                    <span *ngIf="rrfForm.controls['rrf_temp_tenure_to_date'].hasError('pattern') "> 
+                                        Invalid Date format                                 
+                                    </span> 
+                                </div>
+                                Value: {{ rrfForm.get('rrf_temp_tenure_to_date').value | date:'dd-MM-yyyy' }}
+                            <!--</div>-->
+                        </div>                                                
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_sal_present_role_holder">Present Salary (Monthly) <span class="text-danger">*</span></label>
+                            <input formControlName="rrf_sal_present_role_holder" name="rrf_sal_present_role_holder" type="text" size="25" maxlength="100" class="form-control" value="" >
+                            <div *ngIf="rrfForm.controls['rrf_permananet_ftc_third_party'].value==='Permanent'" class="text-danger">
+                                <div *ngIf="rrfForm.controls['rrf_sal_present_role_holder'].touched && !rrfForm.controls['rrf_sal_present_role_holder'].valid " class="text-danger">
+                                    <span *ngIf="rrfForm.controls['rrf_sal_present_role_holder'].hasError('required') "> 
+                                        Present Salary is required                                 
+                                    </span> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_sal_proposed">Proposed Salary (Monthly) <span class="text-danger">*</span></label>
+							<select formControlName="rrf_sal_proposed" name="rrf_sal_proposed" class="form-control">
+                                <option value="">--Select Salary--</option>
+                                <option value="0-10000">0-10000</option>
+                                <option value="10001-20000">10001-20000</option>
+                                <option value="20001-30000">20001-30000</option>
+                                <option value="30001-40000">30001-40000</option>
+								<option value="40001-50000">40001-50000</option>
+                                <option value="50001-60000">50001-60000</option>
+                                <option value="60001-70000">60001-70000</option>
+								<option value="70001-80000">70001-80000</option>
+                                <option value="80001-90000">80001-90000</option>
+                                <option value="90001-100000">90001-100000</option>
+								 <option value="100001+">100001+</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_warehouse_allowance">Logistics :Warehouse Allowance</label><br>
+                            <label class="radio-inline">
+                                <input type="radio" name="rrf_warehouse_allowance" formControlName="rrf_warehouse_allowance" class="" value="Y"> Applicable                                                           
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="rrf_warehouse_allowance" formControlName="rrf_warehouse_allowance" class="" value="N" checked=""> Not Applicable
+                            </label>                                             
+                            
+                        </div>
+                    </div> 
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_pli_target_bonus_sales_incentive">Incentive Schemes <span class="text-danger">*</span></label>
+                            <select formControlName="rrf_pli_target_bonus_sales_incentive" name="rrf_pli_target_bonus_sales_incentive" class="form-control">
+                                <option value="">--Select Hiring--</option>
+                                <option value="PLI">PLI</option>
+                                <option value="Target Bonus">Target Bonus</option>
+                                <option value="Sales Incentive">Sales Incentive</option>
+                                <option value="No Incentive">No Incentive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_min_experience">Experience  <span class="text-danger">*</span></label>                     
+                            <textarea class="form-control" name="rrf_min_experience" formControlName="rrf_min_experience" rows="2" placeholder=""></textarea> 
+                        </div>
+                    </div>
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_min_qualification">Qualification <span class="text-danger">*</span></label>
+                            <textarea class="form-control" name="rrf_min_qualification" formControlName="rrf_min_qualification" rows="2" placeholder=""></textarea> 
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_min_prof_qualification">Minimum Prof. Qualification <span class="text-danger">*</span> </label>
+                            <textarea class="form-control" name="rrf_min_prof_qualification" formControlName="rrf_min_prof_qualification" rows="2" placeholder=""></textarea> 
+                        </div>
+                    </div> 
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="Document_Upload">Document Upload</label>
+							<input type="file" name="Document_Upload" id="Document_Upload">
+							<br>
+							<div id="file_info" class="label-success" style="display: none;">
+								<ul class="todo-list">
+									<li style="background-color: white;">
+										<span class="text" id="fileName"></span>
+										<!--<small class="label label-info"><i class="fa fa-clock-o"></i> 4 hours</small>-->
+										<div class="tools">
+											<i class="fa fa-download" id="filedownload"></i>
+										</div>
+									</li>
+								</ul>  
+							</div> 
+						</div>
+					</div>	
+                </div>
+				<div class="row">
+                    <div class="col-md-6">										        
+                        <div class="form-group">
+                            <label for="rrf_role">Role  </label>
+                            <textarea class="form-control" name="rrf_role" formControlName="rrf_role" rows="2" placeholder=""></textarea> 
+                        </div>
+                    </div>
+				</div>
+                <div class="">
+                    <button class="btn btn-primary btn-block" type="submit" [disabled]="!rrfForm.valid">Submit</button>
+                </div>
+                
+                <p>Form value: {{ rrfForm.value | json }}</p>
+            </fieldset>
+        </section> 
+    </form>
+</div>
